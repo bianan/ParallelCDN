@@ -1,9 +1,9 @@
-//Copyright [2017] [An Bian / ETH Zurich]
+//Copyright [2019] [Yatao (An) Bian / ETH Zurich]
 /**
     This file is part of the implementation of PCDN, SCDN and CDN as described in the paper:
 
 Parallelized Coordinate Descent Newton Method for Efficient L1-Regularized Minimization.
-https://arxiv.org/abs/1306.4080
+https://ieeexplore.ieee.org/abstract/document/8661743
 
     Please cite the paper if you are using this code in your work.
 
@@ -37,7 +37,7 @@ struct Problem
 	int l;  //   #sample
 	int n;   // #feature
 	int *y;   //  label
-	struct FeatureNode **x;   //  design matrix X 
+	struct FeatureNode **x;   //  design matrix X
 	double bias;            /* == 0 if no bias term */
 };
 

@@ -1,11 +1,10 @@
 C/C++ implementation for PCDN, SCDN and CDN metioned in the paper:
 
 Parallelized Coordinate Descent Newton Method for Efficient L1-Regularized Minimization.
-https://arxiv.org/abs/1306.4080
 https://ieeexplore.ieee.org/abstract/document/8661743
+https://arxiv.org/abs/1306.4080
 
-
-Contents
+# Contents
 ******************************************
 Installation
 ============
@@ -24,7 +23,7 @@ Example
 *****************************************
 
 
-Installation
+# Installation
 ============
 
 On Unix systems, type
@@ -42,7 +41,7 @@ Run them without arguments to show the usages.
 
 The software has been tested on Ubuntu 12.04 x86_64.
 
-`train' Usage
+# `train' Usage
 =============
 Usage: train [options] training_file test_file [model_file_name]
 
@@ -79,7 +78,7 @@ model_file_name:
         If you do not set model_file_name, it will be set as the result file nam
 e following ".model"
 
-`infer' Usage
+# `infer' Usage
 =============
 
 Usage: infer  test_file model_file output_file
@@ -94,7 +93,7 @@ output_file:
         output file name
 
 
-Datasets Download
+# Datasets Download
 =================
 
 Type
@@ -118,7 +117,7 @@ then type
 
 $ make
 
-The Log Files
+# The Log Files
 =============
 
 With each run, two log files will be stored in 'log/' directory, with the name indicating configuration of the specific experiment. For example,
@@ -132,7 +131,7 @@ indicate: algorithm: pcdn, threads: 3, bundle size: 1250, slover: 0, C: 4.0, eps
 The first log file stores the contents printed on the terminal, the second log file stores outputs of each iteration, which could be used to generate the experimental results.
 
 
-Example
+# Example
 ========
 
 real-sim.train and real-sim.test are put as example dataset on the project webpage:
@@ -153,3 +152,7 @@ L1-regularized L2-loss support vector classification:
 $ ./train -a 2 -s 1 -c 1.0  -e 1e-3   ./data/real-sim.train ./data/real-sim.test model_svc
 
 $ ./infer ./data/real-sim.test model_svc out_svc
+
+# Copyright:
+
+Copyright (2019) [Yatao (An) Bian <yatao.bian@gmail.com> | yataobian.com]. Please cite the above paper if you use this code in your work.

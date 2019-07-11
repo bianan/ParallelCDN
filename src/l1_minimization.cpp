@@ -1,9 +1,9 @@
-﻿//Copyright [2017] [An Bian / ETH Zurich]
-/** 
+﻿//Copyright [2019] [Yatao (An) Bian / ETH Zurich]
+/**
     This file is part of the implementation of PCDN, SCDN and CDN as described in the paper:
 
 Parallelized Coordinate Descent Newton Method for Efficient L1-Regularized Minimization.
-https://arxiv.org/abs/1306.4080
+https://ieeexplore.ieee.org/abstract/document/8661743
 
     Please cite the paper if you are using this code in your work.
 
@@ -11,7 +11,7 @@ https://arxiv.org/abs/1306.4080
     educational purposes, the only requirement is that this text is
     preserved within the derivative work. For any other purpose you
     must contact the authors for permission. This code may not be
-    redistributed without permission from the authors.  
+    redistributed without permission from the authors.
 */
 #include <time.h>
 #include <math.h>
@@ -47,7 +47,7 @@ template <class T> static inline T min(T x,T y) { return (x<y)?x:y; }
 template <class T> static inline T max(T x,T y) { return (x>y)?x:y; }
 #endif
 template <class S, class T> static inline void clone(T*& dst, S* src, int n)
-{   
+{
 	dst = new T[n];
 	memcpy((void *)dst,(void *)src,sizeof(T)*n);
 }
@@ -146,12 +146,12 @@ double evaluate_testing(double *w, int w_size, const Problem *probtest)
 }
 
 
-// A coordinate descent algorithm for 
+// A coordinate descent algorithm for
 // L1-regularized L2-loss support vector classification
 //
 //  min_w \sum |wj| + C \sum max(0, 1-yi w^T xi)^2,
 //
-// Given: 
+// Given:
 // x, y, Cp, Cn
 // eps is the stopping tolerance
 //
@@ -511,13 +511,13 @@ static void solve_l1r_l2_svc(
 	delete [] xj_sq;
 }
 
-// A modified  coordinate descent newtion implementation for 
+// A modified  coordinate descent newtion implementation for
 // L1-regularized L2-loss support vector classification based on LIBLINEAR 1.7
 // The shrinking procedure is modified to be consistent with other parallel algorithms.
 //
 //  min_w \sum |wj| + C \sum max(0, 1-yi w^T xi)^2,
 //
-// Given: 
+// Given:
 // x, y, Cp, Cn
 // eps is the stopping tolerance
 //
@@ -530,12 +530,12 @@ static void solve_l1r_l2_svc_cdn(
 	Problem *prob_col, const Problem *probtest,
 	double *w, double eps,
 	double Cp, double Cn)
-{//        cdn    
+{//        cdn
 	//  add testing in_iteration  report  total_num_line_search, acc, model_nnz
 	//  remove GETI(i)
 	//  shrink after loop
 	//  atomic for b.add b.set
-	//  not using appro-line 
+	//  not using appro-line
 	// use 	 omp wall time
 	const int l = prob_col->l;
 	const int n = prob_col->n;
@@ -578,7 +578,7 @@ static void solve_l1r_l2_svc_cdn(
 
 	for(int j=0; j<n; j++)
 	{
-		w[j] = 0;     
+		w[j] = 0;
 		index[j] = j;
 		xj_sq[j] = 0;
 		x = prob_col->x[j];
@@ -715,7 +715,7 @@ static void solve_l1r_l2_svc_cdn(
 						x++;
 					}
 
-					break;//    terminate 
+					break;//    terminate
 				}
 #endif
 
@@ -764,7 +764,7 @@ static void solve_l1r_l2_svc_cdn(
 				}
 			}//   for(num_linesearch=0; num_linesearch < max_num_linesearch; num_linesearch++)
 
-			total_num_line_search+=num_linesearch+1;//   treat recompute as one line search    atomic   needed  
+			total_num_line_search+=num_linesearch+1;//   treat recompute as one line search    atomic   needed
 
 			w[j] += d;
 
@@ -778,7 +778,7 @@ static void solve_l1r_l2_svc_cdn(
 
 				for(int j=0; j<n; j++)
 				{
-					if(w[j]==0) 
+					if(w[j]==0)
 						continue;
 					x = prob_col->x[j];
 					while(x->index != -1)
@@ -822,7 +822,7 @@ static void solve_l1r_l2_svc_cdn(
 
 		//--------------- start of in_iteration testing
 #if 1
-		obj=0; 
+		obj=0;
 		model_nnz = 0;
 		for(int j=0; j<n; j++)
 		{
@@ -964,13 +964,13 @@ static void solve_l1r_l2_svc_cdn(
 	Problem *prob_col, const Problem *probtest,
 	double *w, double eps,
 	double Cp, double Cn)
-{//   cdn    
+{//   cdn
 	//  add testing in_iteration  report  total_num_line_search, acc, model_nnz
 	//  remove GETI(i)
 	//  shrink after loop
 	// no atomic
-	//  not using appro-line 
-	// use 	cas_array<double> dTx(l);   
+	//  not using appro-line
+	// use 	cas_array<double> dTx(l);
 	//@TODO: experiment with dTx
 	const bool appr_lineserch = false;
 	const int l = prob_col->l;
@@ -1014,7 +1014,7 @@ static void solve_l1r_l2_svc_cdn(
 
 	for(int j=0; j<n; j++)
 	{
-		w[j] = 0;     
+		w[j] = 0;
 		index[j] = j;
 		xj_sq[j] = 0;
 		x = prob_col->x[j];
@@ -1045,7 +1045,7 @@ static void solve_l1r_l2_svc_cdn(
 	// reporting line search
 	int total_num_line_search =0;
 
-	//  
+	//
 	cas_array<double> dTx(l);
 	double *b_new=new double[l];
 
@@ -1171,7 +1171,7 @@ static void solve_l1r_l2_svc_cdn(
 						x++;
 					}
 
-					break;//    terminate 
+					break;//    terminate
 				}
 #endif
 
@@ -1229,7 +1229,7 @@ static void solve_l1r_l2_svc_cdn(
 				{
 					//d_old = d;
 					d *= beta;
-					delta *= beta;	
+					delta *= beta;
 					//if (num_linesearch > 0)
 					//{
 					x = prob_col->x[j];
@@ -1243,7 +1243,7 @@ static void solve_l1r_l2_svc_cdn(
 				}
 			}//   for(num_linesearch=0; num_linesearch < max_num_linesearch; num_linesearch++)
 
-			total_num_line_search+=num_linesearch+1;//   treat recompute as one line search    atomic   needed  
+			total_num_line_search+=num_linesearch+1;//   treat recompute as one line search    atomic   needed
 
 			w[j] += d;
 
@@ -1257,7 +1257,7 @@ static void solve_l1r_l2_svc_cdn(
 
 				for(int j=0; j<n; j++)
 				{
-					if(w[j]==0) 
+					if(w[j]==0)
 						continue;
 					x = prob_col->x[j];
 					while(x->index != -1)
@@ -1299,7 +1299,7 @@ static void solve_l1r_l2_svc_cdn(
 
 		//---------------  bian start of in_iteration testing
 #if 1
-		obj=0; 
+		obj=0;
 		model_nnz = 0;
 		for(int j=0; j<n; j++)
 		{
@@ -1436,12 +1436,12 @@ static void solve_l1r_l2_svc_cdn(
 
 #endif
 
-// A parallel  coordinate descent newton (PCDN) implementation for 
-// L1-regularized L2-loss support vector classification 
+// A parallel  coordinate descent newton (PCDN) implementation for
+// L1-regularized L2-loss support vector classification
 //
 //  min_w \sum |wj| + C \sum max(0, 1-yi w^T xi)^2,
 //
-// Given: 
+// Given:
 // x, y, Cp, Cn
 // eps is the stopping tolerance
 //
@@ -1452,12 +1452,12 @@ static void solve_l1r_l2_svc_pcdn_dtx_iiter(
 	Problem *prob_col, const Problem *probtest, const int _bundle_size,
 	double *w, double eps,
 	double Cp, double Cn)
-{//   pcdn    
+{//   pcdn
 	//  add testing in_iteration  report  total_num_line_search, acc, model_nnz
-	//  shrink after loop    
-	//  p-D line search   
+	//  shrink after loop
+	//  p-D line search
 	//not using dTx_nz_idx
-	//not using cas_array 
+	//not using cas_array
 	// using omp wall time
 	// reporting total_num_line_search
 	//  no adaptive of bundle size
@@ -1501,7 +1501,7 @@ static void solve_l1r_l2_svc_pcdn_dtx_iiter(
 
 	for(int j=0; j<n; j++)
 	{
-		w[j] = 0;     
+		w[j] = 0;
 		index[j] = j;
 		xj_sq[j] = 0;
 		x = prob_col->x[j];
@@ -1716,7 +1716,7 @@ static void solve_l1r_l2_svc_pcdn_dtx_iiter(
 					loss_new = 0;
 #pragma omp parallel for reduction(+:loss_old), reduction(+:loss_new)
 					for (int i=0;i<l;i++)
-					{  
+					{
 						if(0 == dTx[i])
 						{
 							continue;
@@ -1739,7 +1739,7 @@ static void solve_l1r_l2_svc_pcdn_dtx_iiter(
 					loss_new = 0;
 #pragma omp parallel for  reduction(+:loss_new)
 					for (int i=0;i<l;i++)
-					{  
+					{
 						if(0 == dTx[i])
 						{
 							continue;
@@ -1756,11 +1756,11 @@ static void solve_l1r_l2_svc_pcdn_dtx_iiter(
 				cond = cond + loss_new - loss_old;
 				if(cond <= 0)
 				{
-#pragma omp parallel for  
+#pragma omp parallel for
 					for (int i=0;i<l;i++)
-					{  
+					{
 						if(0 == dTx[i])
-							continue;	
+							continue;
 						b[i]=b_new[i];
 					}
 					break;
@@ -1779,15 +1779,15 @@ static void solve_l1r_l2_svc_pcdn_dtx_iiter(
 					}
 					delta *= beta;
 					//for (int i=0;i<l;i++)
-					//{  
+					//{
 					//	if(0==dTx[i])
-					//		continue;	
+					//		continue;
 					//	dTx[i]*=beta;
 					//}
 				}
 			}//   for(num_linesearch=0; num_linesearch < max_num_linesearch; num_linesearch++)
 			//#pragma  omp atomic
-			total_num_line_search+=num_linesearch+1;//   treat recompute as one line search    atomic   needed  
+			total_num_line_search+=num_linesearch+1;//   treat recompute as one line search    atomic   needed
 			for(int s=feature_id; s<feature_id+bundle_size; s++)
 			{
 				if (s<active_size)
@@ -1806,7 +1806,7 @@ static void solve_l1r_l2_svc_pcdn_dtx_iiter(
 
 				for(int j=0; j<n; j++)
 				{
-					if(w[j]==0) 
+					if(w[j]==0)
 						continue;
 					x = prob_col->x[j];
 					while(x->index != -1)
@@ -1825,7 +1825,7 @@ static void solve_l1r_l2_svc_pcdn_dtx_iiter(
 					if(0 == dTx[i])
 					{
 						continue;
-					}	
+					}
 					b[i] = b[i] - dTx[i];
 				}
 
@@ -1865,7 +1865,7 @@ static void solve_l1r_l2_svc_pcdn_dtx_iiter(
 
 		//---------------   start of in_iteration testing
 #if 1
-		obj=0; 
+		obj=0;
 		model_nnz = 0;
 		for(int j=0; j<n; j++)
 		{
@@ -2003,12 +2003,12 @@ static void solve_l1r_l2_svc_pcdn_dtx_iiter(
 
 
 
-// A coordinate descent algorithm for 
+// A coordinate descent algorithm for
 // L1-regularized logistic regression problems with bias term
 //
 //  min_w \sum |wj| + C \sum log(1+exp(-yi (w^T xi + bias))),
 //
-// Given: 
+// Given:
 // x, y, Cp, Cn
 // eps is the stopping tolerance
 //
@@ -2021,7 +2021,7 @@ static void solve_l1r_lr_b(
 	double *w, double eps,
 	double Cp, double Cn)
 {//   cdn  不用 approximation line search
-	// 
+	//
 	int l = prob_col->l;
 	int w_size = prob_col->n;
 	int j, s, iter = 0;
@@ -2456,13 +2456,13 @@ static void solve_l1r_lr_b(
 		delete [] xjneg_sum;
 		delete [] xjpos_sum;
 }
-// A modified coordinate descent newton implementation for 
+// A modified coordinate descent newton implementation for
 // L1-regularized logistic regression problems with bias term
 // The shrinking procedure is modified so that it is consistent with the other parallel algorithms.
 //
 //  min_w \sum |wj| + C \sum log(1+exp(-yi (w^T xi + bias))),
 //
-// Given: 
+// Given:
 // x, y, Cp, Cn
 // eps is the stopping tolerance
 //
@@ -2475,7 +2475,7 @@ static void solve_l1r_lr_b_cdn(
 {// bias  cdn       not using  approximation line search
 	//  shrink after feature loop
 	// use omp wall time
-	//use new more efficient recomputing procedure  
+	//use new more efficient recomputing procedure
 	const int l = prob_col->l;
 	const int n = prob_col->n;
 
@@ -2499,9 +2499,9 @@ static void solve_l1r_lr_b_cdn(
 
 	int *index = new int[n];
 	schar *y = new schar[l];//   0, 1
-	//double *exp_wTx = new double[l];//  atomic 
+	//double *exp_wTx = new double[l];//  atomic
 	cas_array<double> exp_wTx(l);
-	//double *exp_wTx_new = new double[l];//  //  atomic 
+	//double *exp_wTx_new = new double[l];//  //  atomic
 	cas_array<double> exp_wTx_new(l);//  atomic
 	//cas_array<double> wTx(l);//  not used
 
@@ -2511,9 +2511,9 @@ static void solve_l1r_lr_b_cdn(
 	double *xjpos_sum = new double[n];//  no data race
 	//feature_node *x;
 
-	//  use tau and D 
+	//  use tau and D
 	//double *tau = new double[l];//  derivative of the logistic loss function
-	//double *D = new double[l];  
+	//double *D = new double[l];
 
 	//---bias
 	double bias = 0;
@@ -2589,7 +2589,7 @@ static void solve_l1r_lr_b_cdn(
 		{
 			int i = s+rand()%(active_size-s);
 			Swap(index[i], index[s]);
-			//swap(feature_status[i],feature_status[j]);//   
+			//swap(feature_status[i],feature_status[j]);//
 		}
 
 		//int feature_upper_id=(active_size/NUM_THREADS)*NUM_THREADS;
@@ -2647,7 +2647,7 @@ static void solve_l1r_lr_b_cdn(
 			else
 				violation_array[s] = fabs(Gn);
 
-			//Gmax_new = max(Gmax_new, violation_array[s]);//   atomic 
+			//Gmax_new = max(Gmax_new, violation_array[s]);//   atomic
 			//Gnorm1 += violation_array[s];  //   reduction
 
 			// obtain Newton direction d
@@ -2676,7 +2676,7 @@ static void solve_l1r_lr_b_cdn(
 #if 0
 				if (appr_lineserch)
 				{
-					if(x_min >= 0)//  
+					if(x_min >= 0)//
 					{
 						//info_save("$");
 						double tmp = exp(d*xj_max[j]);
@@ -2707,10 +2707,10 @@ static void solve_l1r_lr_b_cdn(
 					double exp_dx = exp(d*x->value);
 					//info_save("idx %d %g ",ind,exp_dx);
 					//exp_wTx_new[i] = exp_wTx[ind]*exp_dx;//  race
-					exp_wTx_new.set(ind,exp_wTx[ind]*exp_dx);//  race   
+					exp_wTx_new.set(ind,exp_wTx[ind]*exp_dx);//  race
 
 					cond += C[y[ind]]*log((1+exp_wTx_new[ind])/(exp_dx+exp_wTx_new[ind]));
-					x++; 
+					x++;
 					//i++;
 				}
 				//info_save("cond2: %d\n",cond);
@@ -2722,7 +2722,7 @@ static void solve_l1r_lr_b_cdn(
 					{
 						int ind = x->index;
 						exp_wTx.set(ind, exp_wTx_new[ind]);
-						x++; 
+						x++;
 						//i++;
 					}
 					//num_linesearch++;
@@ -2741,8 +2741,8 @@ static void solve_l1r_lr_b_cdn(
 			// recompute exp_wTx[] if line search takes too many steps
 #if 1
 			if (num_linesearch >= max_num_linesearch)
-			{//  haha  
-				info_save("#");// 
+			{//  haha
+				info_save("#");//
 				//int i = 0;
 				x = prob_col->x[j];
 				while(x->index != -1)
@@ -2750,22 +2750,22 @@ static void solve_l1r_lr_b_cdn(
 					int ind = x->index;
 					double exp_dx = exp(d*x->value);
 					//exp_wTx_new[i] = exp_wTx[ind]*exp_dx;//  race
-					exp_wTx.set(ind,exp_wTx[ind]*exp_dx);//  race  
-					x++; 
+					exp_wTx.set(ind,exp_wTx[ind]*exp_dx);//  race
+					x++;
 					//i++;
 				}
 			}
-#else				
+#else
 			if(num_linesearch >= max_num_linesearch)
-			{//   
-				info_save("#");//   
+			{//
+				info_save("#");//
 				for(int i=0; i<l; i++)
 					//exp_wTx[i] = bias;//  race
 					exp_wTx.set(i, bias);
 
 				for(int j=0; j<n; j++)
 				{
-					if(w[j]==0) 
+					if(w[j]==0)
 						continue;
 					x = prob_col->x[j];
 					while(x->index != -1)
@@ -2872,7 +2872,7 @@ static void solve_l1r_lr_b_cdn(
 					exp_wTx[i] = bias;
 				for(int i=0; i<n; i++)
 				{
-					if(w[i]==0) 
+					if(w[i]==0)
 						continue;
 					FeatureNode * x = prob_col->x[i];
 					while(x->index != -1)
@@ -2896,7 +2896,7 @@ static void solve_l1r_lr_b_cdn(
 		/////////////////////////////////////////////////////////////////////////
 		total_time+= omp_get_wtime()-start;
 		//---------------  bian start of in_iteration testing
-		obj=0; 
+		obj=0;
 		model_nnz = 0;
 		for (int j=0;j<n;j++)
 		{
@@ -2933,7 +2933,7 @@ static void solve_l1r_lr_b_cdn(
 		if(Gnorm1 <= eps*Gnorm1_init)//  结束条件
 		{
 			if(active_size == n)
-				break;//   
+				break;//
 			else
 			{
 				active_size = n;
@@ -2988,7 +2988,7 @@ static void solve_l1r_lr_b_cdn(
 		G += tmp2;
 	}
 	G = -G + neg_sum;
-	gc_norm += G*G;//   
+	gc_norm += G*G;//
 	gc_norm = sqrt(gc_norm);
 
 	//for(j=0; j<n; j++)
@@ -3017,12 +3017,12 @@ static void solve_l1r_lr_b_cdn(
 	delete [] feature_status;
 	delete [] violation_array;
 }
-// A new Shotgun Coordinate Descent Newton implementation for 
+// A new Shotgun Coordinate Descent Newton implementation for
 // L1-regularized logistic regression problems with bias term
 //
 //  min_w \sum |wj| + C \sum log(1+exp(-yi (w^T xi + bias))),
 //
-// Given: 
+// Given:
 // x, y, Cp, Cn
 // eps is the stopping tolerance
 //
@@ -3032,7 +3032,7 @@ static void solve_l1r_lr_b_scdn(
 	const Problem *prob_col, const Problem *probtest,const Problem *prob,
 	double *w, double eps,
 	double Cp, double Cn, double *model_bias)
-{//   scdn      
+{//   scdn
 	//no using approximation line search
 	//  if using omp， it is shotgun-cdn
 	//  if not using omp，it is cdn，shrink outside loop
@@ -3062,9 +3062,9 @@ static void solve_l1r_lr_b_scdn(
 
 	int *index = new int[n];
 	schar *y = new schar[l];//   0, 1
-	//double *exp_wTx = new double[l];//  atomic 
+	//double *exp_wTx = new double[l];//  atomic
 	cas_array<double> exp_wTx(l);
-	//double *exp_wTx_new = new double[l];//  //  atomic 
+	//double *exp_wTx_new = new double[l];//  //  atomic
 	cas_array<double> exp_wTx_new(l);//  atomic
 	cas_array<double> wTx(l);//   used for recompute
 
@@ -3153,7 +3153,7 @@ static void solve_l1r_lr_b_scdn(
 			Swap(index[i], index[s]);
 		}
 
-#pragma omp parallel for  
+#pragma omp parallel for
 		for(int s=0; s<active_size; s++)
 		{
 
@@ -3202,7 +3202,7 @@ static void solve_l1r_lr_b_scdn(
 			else
 				violation_array[s] = fabs(Gn);
 
-			//Gmax_new = max(Gmax_new, violation_array[s]);//   atomic 
+			//Gmax_new = max(Gmax_new, violation_array[s]);//   atomic
 			//Gnorm1 += violation_array[s];  //   reduction
 
 			// obtain Newton direction d
@@ -3228,8 +3228,8 @@ static void solve_l1r_lr_b_scdn(
 			{
 				cond = fabs(w[j]+d)-fabs(w[j]) - sigma*delta;
 
-#if 0// 
-				if(x_min >= 0)//  
+#if 0//
+				if(x_min >= 0)//
 				{
 					//info_save("*");
 					double tmp = exp(d*xj_max[j]);
@@ -3239,7 +3239,7 @@ static void solve_l1r_lr_b_scdn(
 					{
 						x = prob_col->x[j];
 						while(x->index != -1)
-						{//  feature j 
+						{//  feature j
 							exp_wTx.mul(x->index,exp(d*x->value));
 							x++;
 						}
@@ -3258,10 +3258,10 @@ static void solve_l1r_lr_b_scdn(
 					double exp_dx = exp(d*x->value);
 					//info_save("idx %d %g ",ind,exp_dx);
 					//exp_wTx_new[i] = exp_wTx[ind]*exp_dx;//  race
-					exp_wTx_new.set(ind,exp_wTx[ind]*exp_dx);//  race  
+					exp_wTx_new.set(ind,exp_wTx[ind]*exp_dx);//  race
 
 					cond += C[y[ind]]*log((1+exp_wTx_new[ind])/(exp_dx+exp_wTx_new[ind]));
-					x++; 
+					x++;
 				}
 				//info_save("cond2: %d\n",cond);
 				if(cond <= 0)
@@ -3272,7 +3272,7 @@ static void solve_l1r_lr_b_scdn(
 						int i = x->index;
 						//exp_wTx[ind] = exp_wTx_new[i];// race
 						exp_wTx.set(i, exp_wTx_new[i]);
-						x++; 
+						x++;
 					}
 					//num_linesearch++;
 					break;
@@ -3290,33 +3290,33 @@ static void solve_l1r_lr_b_scdn(
 			// recompute exp_wTx[] if line search takes too many steps
 #if 0
 			if (num_linesearch >= max_num_linesearch)
-			{//  haha  
-				info_save("#");// 
+			{//  haha
+				info_save("#");//
 				x = prob_col->x[j];
 				while(x->index != -1)
 				{
 					int ind = x->index;
 					double exp_dx = exp(d*x->value);
 					//exp_wTx_new[i] = exp_wTx[ind]*exp_dx;//  race
-					exp_wTx.set(ind,exp_wTx[ind]*exp_dx);//  race  
-					x++; 
+					exp_wTx.set(ind,exp_wTx[ind]*exp_dx);//  race
+					x++;
 				}
 
 			}
 
-#else				
+#else
 #if 0
 			if(num_linesearch >= max_num_linesearch)
 			{//   似乎可以再优化
 				//  has Problem for scdn, because exp_wTx cannot be used as wTx
-				info_save("#");//   
+				info_save("#");//
 				for(int i=0; i<l; i++)
 					//exp_wTx[i] = bias;//  race
 					exp_wTx.set(i, bias);
 
 				for(int j=0; j<n; j++)
 				{
-					if(w[j]==0) 
+					if(w[j]==0)
 						continue;
 					x = prob_col->x[j];
 					while(x->index != -1)
@@ -3333,9 +3333,9 @@ static void solve_l1r_lr_b_scdn(
 			}// if(num_linesearch >= max_num_linesearch)
 #else
 			if(num_linesearch >= max_num_linesearch)
-			{//       
+			{//
 				//  has problem for scdn, because exp_wTx cannot be used as wTx
-				info_save("#");// 
+				info_save("#");//
 				for (int i=0;i<l;i++)
 				{
 					double wTxi= bias;
@@ -3362,7 +3362,7 @@ static void solve_l1r_lr_b_scdn(
 
 				//for(int j=0; j<n; j++)
 				//{
-				//	if(w[j]==0) 
+				//	if(w[j]==0)
 				//		continue;
 				//	x = prob_col->x[j];
 				//	while(x->index != -1)
@@ -3469,7 +3469,7 @@ static void solve_l1r_lr_b_scdn(
 					exp_wTx[i] = bias;
 				for(int i=0; i<n; i++)
 				{
-					if(w[i]==0) 
+					if(w[i]==0)
 						continue;
 					FeatureNode * x = prob_col->x[i];
 					while(x->index != -1)
@@ -3494,7 +3494,7 @@ static void solve_l1r_lr_b_scdn(
 		/////////////////////////////////////////////////////////////////////////
 		total_time+= omp_get_wtime()-start;
 		//---------------  bian start of in_iteration testing
-		obj=0; 
+		obj=0;
 		model_nnz = 0;
 		for (int j=0;j<n;j++)
 		{
@@ -3537,7 +3537,7 @@ static void solve_l1r_lr_b_scdn(
 		if(Gnorm1 <= eps*Gnorm1_init)//  结束条件
 		{
 			if(active_size == n)
-				break;//   
+				break;//
 			else
 			{
 				active_size = n;
@@ -3594,7 +3594,7 @@ static void solve_l1r_lr_b_scdn(
 		G += tmp2;
 	}
 	G = -G + neg_sum;
-	gc_norm += G*G;//   
+	gc_norm += G*G;//
 	gc_norm = sqrt(gc_norm);
 
 	//for(j=0; j<n; j++)
@@ -3624,12 +3624,12 @@ static void solve_l1r_lr_b_scdn(
 	delete [] feature_status;
 	delete [] violation_array;
 }
-// A Parallel Coordinate Descent Newton (PCDN) implementation for 
+// A Parallel Coordinate Descent Newton (PCDN) implementation for
 // L1-regularized logistic regression problems with bias term
 //
 //  min_w \sum |wj| + C \sum log(1+exp(-yi (w^T xi + bias))),
 //
-// Given: 
+// Given:
 // x, y, Cp, Cn
 // eps is the stopping tolerance
 //
@@ -3643,9 +3643,9 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 {//  l1r_lr_b_pcdn_no_adaptive_iiter
 	//  new recompute,  after shrink , bundle line search
 	//   not using approximation line search
-	//  use new recompute for bias line search (not strictly tested), but no matter 
+	//  use new recompute for bias line search (not strictly tested), but no matter
 	//   not using bundle_feature_idx, using omp in line search.
-	//  use omp time       new line search # 
+	//  use omp time       new line search #
 	// report number of outer iteration and number of inner iteration
 	const int l = prob_col->l;
 	const int n = prob_col->n;
@@ -3667,17 +3667,17 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 
 	int *index = new int[n];
 	schar *y = new schar[l];//   0, 1
-	double *exp_wTx = new double[l];//  
+	double *exp_wTx = new double[l];//
 	//cas_array<double> exp_wTx(l);
-	double *exp_wTx_new = new double[l];//  //  
-	//cas_array<double> exp_wTx_new(l);//  
+	double *exp_wTx_new = new double[l];//  //
+	//cas_array<double> exp_wTx_new(l);//
 #ifdef PCDN_CAS_LR
-	cas_array<double> dTx(l);//   atomic 
+	cas_array<double> dTx(l);//   atomic
 #else
 	double *dTx = new double[l];
 #endif
 
-	//const int linesearch_threads_num = 7; 
+	//const int linesearch_threads_num = 7;
 	//omp_set_num_threads(linesearch_threads_num);
 	//info_save("bias bcdn OMP threads = %d\n", linesearch_threads_num);
 	//info_save("bias bcdn  max #threads: %d\n",omp_get_max_threads());
@@ -3757,7 +3757,7 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 	//  space for time
 #if 0
 	bool *bundle_feature_flag =new bool[l];//  false: not used yet
-	memset(bundle_feature_flag,0,sizeof(bool)*l);//  
+	memset(bundle_feature_flag,0,sizeof(bool)*l);//
 	int bundle_feature_idx_size = max((l+1),l*BUNDLE_SIZE/10);//  empirical value
 	int *bundle_feature_idx =new int[bundle_feature_idx_size];// 注意最后的-1结束位
 	memset(bundle_feature_idx,0,sizeof(int)*(bundle_feature_idx_size));
@@ -3784,7 +3784,7 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 	int iiter=0;
 	//int iiter2=0;
 	while(iter < max_iter)
-	{		
+	{
 		Gmax_new = 0;//  infinite-norm
 		Gnorm1 = 0;//  1-norm
 
@@ -3808,12 +3808,12 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 		{
 			int s_upper_tmp = min(feature_id+bundle_size, active_size);
 #ifdef PCDN_CAS_LR
-			memset(dTx.arr,0,sizeof(double)*l);//   
+			memset(dTx.arr,0,sizeof(double)*l);//
 #else
 			memset(dTx,0,sizeof(double)*l);//   每次line search之前都要clear
 #endif
 			bundle_d_norm =0;
-#pragma omp parallel for schedule(static, 10) reduction(+:bundle_d_norm)// bundle size 
+#pragma omp parallel for schedule(static, 10) reduction(+:bundle_d_norm)// bundle size
 			for(int s=feature_id; s<s_upper_tmp; s++)
 			{
 				//if (s<active_size)
@@ -3865,7 +3865,7 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 					else
 						violation_array[s] = fabs(Gn);
 
-					//Gmax_new = max(Gmax_new, violation_array[s]);//   atomic 
+					//Gmax_new = max(Gmax_new, violation_array[s]);//   atomic
 					//Gnorm1 += violation_array[s];  //   reduction
 
 					// obtain Newton direction d
@@ -3884,7 +3884,7 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 						continue;
 					}
 					d_ptr[j] = min(max(d_ptr[j],-10.0),10.0);
-//#pragma omp atomic					
+//#pragma omp atomic
 					bundle_d_norm+=fabs(d_ptr[j]);//  race!!
 
 					//feature_node *x;
@@ -3931,7 +3931,7 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 					{
 						cond = fabs(w[j]+d_ptr[s-feature_id])-fabs(w[j]) - sigma*delta;
 
-						if(x_min >= 0)//  为什么会有这个？   
+						if(x_min >= 0)//  为什么会有这个？
 						{
 							double tmp = exp(d_ptr[s-feature_id]*xj_max[j]);
 							appxcond1 = log(1+sum1_ptr[s-feature_id]*(tmp-1)/xj_max[j]/C_sum[j])*C_sum[j] + cond - d_ptr[s-feature_id]*xjpos_sum[j];
@@ -3961,7 +3961,7 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 							exp_wTx_new.set(i,exp_wTx[ind]*exp_dx);//  race   为什么用i？
 
 							cond += C[y[ind]]*log((1+exp_wTx_new[i])/(exp_dx+exp_wTx_new[i]));
-							x++; 
+							x++;
 							i++;
 						}
 
@@ -3974,7 +3974,7 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 								int ind = x->index;
 								//exp_wTx[ind] = exp_wTx_new[i];// race
 								exp_wTx.set(ind, exp_wTx_new[i]);
-								x++; 
+								x++;
 								i++;
 							}
 							break;
@@ -3991,8 +3991,8 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 					// recompute exp_wTx[] if line search takes too many steps
 #if 1
 					if (num_linesearch >= max_num_linesearch)
-					{//  haha  
-						info_save("#");// 
+					{//  haha
+						info_save("#");//
 						//int i = 0;
 						x = prob_col->x[j];
 						while(x->index != -1)
@@ -4000,24 +4000,24 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 							int ind = x->index;
 							double exp_dx = exp(d_ptr[s-feature_id]*x->value);
 							//exp_wTx_new[i] = exp_wTx[ind]*exp_dx;//  race
-							exp_wTx.set(ind,exp_wTx[ind]*exp_dx);//  race  
-							x++; 
+							exp_wTx.set(ind,exp_wTx[ind]*exp_dx);//  race
+							x++;
 							//i++;
 						}
 
 					}
 
-#else				
+#else
 					if(num_linesearch >= max_num_linesearch)
 					{//   似乎可以再优化
-						info_save("#");//   
+						info_save("#");//
 						for(int i=0; i<l; i++)
 							//exp_wTx[i] = bias;//  race
 							exp_wTx.set(i, bias);
 
 						for(int j=0; j<n; j++)
 						{
-							if(w[j]==0) 
+							if(w[j]==0)
 								continue;
 							x = prob_col->x[j];
 							while(x->index != -1)
@@ -4100,7 +4100,7 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 				delta +=  G_ptr[j]*d_ptr[j];
 				new_group_w_norm += fabs(w[j]+d_ptr[j]);
 				group_w_norm+=fabs(w[j]);
-				neg_sum += d_ptr[j]*xjneg_sum[j];//   
+				neg_sum += d_ptr[j]*xjneg_sum[j];//
 			}
 
 			delta += (new_group_w_norm-group_w_norm);
@@ -4114,7 +4114,7 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 				cond += neg_sum;
 
 #if 0
-				if(x_min >= 0)  
+				if(x_min >= 0)
 				{
 					double tmp = exp(d_ptr[s-feature_id]*xj_max[j]);
 					appxcond1 = log(1+sum1_ptr[s-feature_id]*(tmp-1)/xj_max[j]/C_sum[j])*C_sum[j] + cond - d_ptr[s-feature_id]*xjpos_sum[j];
@@ -4145,7 +4145,7 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 				}
 #else
 				memset(bundle_feature_flag,0,sizeof(bool)*l);
-				//for (int idx=0;idx<group_sample_idx.size();idx++)// 
+				//for (int idx=0;idx<group_sample_idx.size();idx++)//
 				//for (ite_idx=group_sample_idx.begin();ite_idx!=group_sample_idx.end();ite_idx++)//
 				g_idx_tmp=0;
 				while(-1!=bundle_feature_idx[g_idx_tmp])
@@ -4155,7 +4155,7 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 					{
 						double exp_dTx = exp(dTx[i]);
 						//info_save("idx %d %g ",i,exp_dTx);
-						exp_wTx_new.set(i,exp_wTx[i]*exp_dTx);//  race  
+						exp_wTx_new.set(i,exp_wTx[i]*exp_dTx);//  race
 						cond += C[y[i]]*log((1+exp_wTx_new[i])/(exp_dTx+exp_wTx_new[i]));
 						bundle_feature_flag[i]=true;
 					}
@@ -4168,7 +4168,7 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 				//	double exp_dTx = exp(dTx[i]);
 				//	//if(1!=exp_dTx)
 				//	//info_save("idx %d %g ",i,exp_dTx);
-				//	exp_wTx_new.set(i,exp_wTx[i]*exp_dTx);//  race  
+				//	exp_wTx_new.set(i,exp_wTx[i]*exp_dTx);//  race
 				//	cond += C[y[i]]*log((1+exp_wTx_new[i])/(exp_dTx+exp_wTx_new[i]));
 				//	x++;
 				//}
@@ -4202,7 +4202,7 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 					//	int ind = x->index;
 					//	//exp_wTx[ind] = exp_wTx_new[i];// race
 					//	exp_wTx.set(ind, exp_wTx_new[ind]);
-					//	x++; 
+					//	x++;
 					//	//i++;
 					//}
 #endif
@@ -4239,7 +4239,7 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 					//	int ind = x->index;
 					//	//exp_wTx[ind] = exp_wTx_new[i];// race
 					//	dTx.mul(ind,beta);
-					//	x++; 
+					//	x++;
 					//	//i++;
 					//}
 #endif
@@ -4262,11 +4262,11 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 			total_num_line_search+= num_linesearch+1;
 #if 1
 			if (num_linesearch >= max_num_linesearch)
-			{//   
-				info_save("#");// 
+			{//
+				info_save("#");//
 #if 1
 #pragma omp parallel for /*num_threads(linesearch_threads_num)*/
-				for (int i=0;i<l;i++)//  
+				for (int i=0;i<l;i++)//
 				{
 					if(0 == dTx[i])
 						continue;
@@ -4290,17 +4290,17 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 			//------------------------------------------end of line search
 
 
-#else				
+#else
 			if(num_linesearch >= max_num_linesearch)
 			{//   似乎可以再优化
-				info_save("#");//   
+				info_save("#");//
 				for(int i=0; i<l; i++)
 					//exp_wTx[i] = bias;//  race
 					exp_wTx.set(i, bias);
 
 				for(int j=0; j<n; j++)
 				{
-					if(w[j]==0) 
+					if(w[j]==0)
 						continue;
 					x = prob_col->x[j];
 					while(x->index != -1)
@@ -4413,7 +4413,7 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 					exp_wTx[i] = bias;
 				for(int i=0; i<n; i++)
 				{
-					if(w[i]==0) 
+					if(w[i]==0)
 						continue;
 					feature_node * x = prob_col->x[i];
 					while(x->index != -1)
@@ -4448,7 +4448,7 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 		}
 		total_time+= omp_get_wtime()-start;
 		//---------------  bian start of in_iteration testing
-		obj=0; 
+		obj=0;
 		model_nnz = 0;
 		for (int j=0;j<n;j++)
 		{
@@ -4460,7 +4460,7 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 
 		}
 		for (int i = 0;i<l;i++)
-		{//   
+		{//
 			if (y[i] == 1)
 				obj+= C[y[i]]*log(1+1/exp_wTx[i]);
 			else
@@ -4486,7 +4486,7 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 		if(Gnorm1 <= eps*Gnorm1_init)//  结束条件
 		{
 			if(active_size == n)
-				break;//   
+				break;//
 			else
 			{
 				active_size = n;
@@ -4538,7 +4538,7 @@ static void solve_l1r_lr_b_pcdn_no_adaptive_iiter(
 		G += tmp2;
 	}
 	G = -G + neg_sum_bias;
-	gc_norm += G*G;//  
+	gc_norm += G*G;//
 	gc_norm = sqrt(gc_norm);
 	*model_bias = bias;
 	info_save("bundle_size %d #iter %d #iiter %d time %lf f %lf accuracy %lf model_nnz %d l %d n %d Gcnorm %g Gnorm1 %lf eps_end %g bias %g total_num_line_search %d\n",
@@ -4747,14 +4747,14 @@ static void train_one(const Problem *prob, const Problem *probtest, const Parame
 		{
 			Problem prob_col;
 			FeatureNode *x_space = NULL;
-			transpose(prob, &x_space ,&prob_col);//  add memory of train data 
+			transpose(prob, &x_space ,&prob_col);//  add memory of train data
 			{
 				switch (g_param.algorithm_type)
 				{
 				case kCDN:
 					solve_l1r_lr_b_cdn(&prob_col, probtest, w, eps*min(pos,neg)/prob->l, Cp, Cn, model_bias);
 					break;
-				case kSCDN: 
+				case kSCDN:
 					solve_l1r_lr_b_scdn(&prob_col, probtest, prob, w, eps*min(pos,neg)/prob->l, Cp, Cn, model_bias);
 					break;
 				case kPCDN:
@@ -4912,7 +4912,7 @@ static const char *solver_type_table[]={"L1R_LR_B", "L1R_L2LOSS_SVC", NULL};
 
 int save_model(const char *model_file_name, const struct Model *model_)
 {//   save exact number of features   exact w
-	//   
+	//
 	int i;
 	int nr_feature=model_->num_feature;
 	int n;
@@ -4954,7 +4954,7 @@ int save_model(const char *model_file_name, const struct Model *model_)
 	}
 
 	if (ferror(fp) != 0 || fclose(fp) != 0) return -1;
-	else 
+	else
 		return 0;
 }
 
@@ -5134,7 +5134,7 @@ int infer(const Model *model_, const FeatureNode *x)
 //				prob_estimates[i]=prob_estimates[i]/sum;
 //		}
 //
-//		return label;		
+//		return label;
 //	}
 //	else
 //		return 0;
@@ -5243,4 +5243,3 @@ void get_labels(const Model *model_, int* label)
 		for(int i=0;i<model_->num_class;i++)
 			label[i] = model_->label[i];
 }
-

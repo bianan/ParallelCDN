@@ -1,16 +1,16 @@
 ﻿// This file is written based on The LIBLINEAR Project.
 // LIBLINEAR 1.7  http://www.csie.ntu.edu.tw/˜cjlin/liblinear/oldfiles/
-/** 
+/**
     This file is part of the implementation of PCDN, SCDN and CDN as described in the paper:
 
 Parallelized Coordinate Descent Newton Method for Efficient L1-Regularized Minimization.
-https://arxiv.org/abs/1306.4080
+https://ieeexplore.ieee.org/abstract/document/8661743
 
     The code may be used free of charge for non-commercial and
     educational purposes, the only requirement is that this text is
     preserved within the derivative work. For any other purpose you
     must contact the authors for permission. This code may not be
-    redistributed without permission from the authors.  
+    redistributed without permission from the authors.
 */
 
 
@@ -32,7 +32,7 @@ void exit_with_help()
 {
 	printf(
 	"Usage: train [options] training_file test_file [model_file_name]\n\n"
-	
+
 	"options:\n\n"
 	"-a algorithm: set algorithm type (default 0)\n"
 	"	0 -- CDN\n"
@@ -76,7 +76,7 @@ static int max_line_len;
 static char* readline(FILE *input)
 {
 	int len;
-	
+
 	if(fgets(line,max_line_len,input) == NULL)
 		return NULL;
 
@@ -100,7 +100,7 @@ struct FeatureNode *g_x_space;
 struct Parameter g_param;
 struct Problem gProb;
 struct Model* gModel;
-int flag_cross_validation;   // default 0 
+int flag_cross_validation;   // default 0
 int nr_fold;
 
 double g_bias;//  training data bias
@@ -109,19 +109,19 @@ double g_bias;//  training data bias
 struct FeatureNode *x_spacetest;
 struct Problem gProbtest;
 
-//  
+//
 
 std::string gOutfile_name="";
 std::string gOutpath = "log/";
 std::string gOutfile_name_verbosity="";
 std::string gCdn_algorithm_name[kNum]={"cdn","scdn","pcdn"};
-////  0 "cdn", 1 "scdn",    2"pcdn"	 
+////  0 "cdn", 1 "scdn",    2"pcdn"
 char gData_set_name[1024];
 int gNum_procs = 0;
 
 
-int g_pcdn_thread_num = 0;//#threads for pcdn. default (set as 0), it is num_procs -1; otherwise, set as other positive integer  
-int g_bundle_size = 1250;   // bundle size  for pcdn 
+int g_pcdn_thread_num = 0;//#threads for pcdn. default (set as 0), it is num_procs -1; otherwise, set as other positive integer
+int g_bundle_size = 1250;   // bundle size  for pcdn
 int g_scdn_thread_num = 8;   // #threads for scdn
 
 
@@ -137,7 +137,7 @@ int main(int argc, char **argv)
 		g_pcdn_thread_num = gNum_procs - 1;
 	}
 
-	parse_command_line(argc, argv, input_file_name, test_file_name, model_file_name);// set outfile name 
+	parse_command_line(argc, argv, input_file_name, test_file_name, model_file_name);// set outfile name
 
 #ifdef _DEBUG
 	info_save("debug version.\n");
@@ -217,7 +217,7 @@ void parse_command_line(int argc, char **argv, char *input_file_name, char *test
 
 	// parse command options
 	for(i=1;i<argc;i++)
-	{		
+	{
 		if(argv[i][0] != '-') break;
 
 		if(++i>=argc)
@@ -226,7 +226,7 @@ void parse_command_line(int argc, char **argv, char *input_file_name, char *test
 		switch(argv[i-1][1])
 		{
 		case 'a':
-			g_param.algorithm_type = (Algorithm)atoi(argv[i]); 
+			g_param.algorithm_type = (Algorithm)atoi(argv[i]);
 				switch (g_param.algorithm_type)
 				{
 				case kCDN:
@@ -330,7 +330,7 @@ void parse_command_line(int argc, char **argv, char *input_file_name, char *test
 
 	strcpy(input_file_name, argv[i]);
 	strcpy(test_file_name, argv[i+1]);
-	
+
 	//----------get data set name
 	int begin_,end_;
 	for (int i=strlen(input_file_name);i>=0;--i)
@@ -350,9 +350,9 @@ void parse_command_line(int argc, char **argv, char *input_file_name, char *test
 			begin_=i;
 			break;
 		}
-		
+
 	}
-	 
+
 	int j=0;
 	for (j=0;j<end_-begin_+1;j++)
 	{
@@ -431,7 +431,7 @@ void read_problem(const char *filename)
 	gProb.y = Malloc(int,gProb.l);
 	gProb.x = Malloc(struct FeatureNode *,gProb.l);
 	g_x_space = Malloc(struct FeatureNode,elements+gProb.l);
-	gProb.nnz =elements -gProb.l;//   
+	gProb.nnz =elements -gProb.l;//
 
 	max_index = 0;
 	j=0;
@@ -481,7 +481,7 @@ void read_problem(const char *filename)
 	{
 		gProb.n=max_index+1;
 		for(i=1;i<gProb.l;i++)
-			(gProb.x[i]-2)->index = gProb.n; 
+			(gProb.x[i]-2)->index = gProb.n;
 		g_x_space[j-2].index = gProb.n;
 	}
 	else
@@ -581,7 +581,7 @@ void read_problem_test(const char *filename)
 	{
 		probtest.n=max_index+1;
 		for(i=1;i<probtest.l;i++)
-			(probtest.x[i]-2)->index = probtest.n; 
+			(probtest.x[i]-2)->index = probtest.n;
 		x_spacetest[j-2].index = probtest.n;
 	}
 	else
@@ -590,4 +590,3 @@ void read_problem_test(const char *filename)
 
 	fclose(fp);
 }
-
